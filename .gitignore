@@ -1,0 +1,5 @@
+.idea
+poetry.lock
+*.pyc
+*_shelf.db
+*_shelf.lock

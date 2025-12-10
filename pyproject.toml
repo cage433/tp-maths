@@ -1,0 +1,36 @@
+[project]
+name = "tp-maths"
+description = ""
+authors = [
+    {name = "cage433",email = "cage433@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy (>=2.3.5,<3.0.0)",
+    "scipy (>=1.16.3,<2.0.0)",
+    "tp-utils @ git+https://github.com/cage433/tp-utils",
+    "tp-quantity @ git+https://github.com/cage433/tp-quantity"
+]
+dynamic = ["version"]
+
+[tool.poetry]
+packages = [{include = "tp_maths", from = "src"}]
+
+include = ["resources"]
+version = "0.0.0"
+
+
+[tool.poetry-dynamic-versioning]
+enable = true
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
+
+[tool.poetry.requires-plugins]
+poetry-dynamic-versioning = { version = ">=1.0.0,<2.0.0", extras = ["plugin"] }
+
+[dependency-groups]
+dev = [
+    "pytest (>=9.0.2,<10.0.0)"
+]
