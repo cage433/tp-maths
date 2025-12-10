@@ -10,7 +10,7 @@ from tp_random_tests.random_number_generator import RandomNumberGenerator
 from tp_random_tests.random_test_case import RandomisedTest
 
 from tests.brownians.test_brownian_generator import BrownianGeneratorTest
-from tests.utils.random_correlation_matrix import RandomCorrelationMatrix
+from tp_maths.random.random_correlation_matrix import RandomCorrelationMatrix
 from tests.statistics_test_case import StatisticsTestCase
 from tp_maths.vector_path.vector_path import VectorPath
 
