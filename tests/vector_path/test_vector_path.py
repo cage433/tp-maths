@@ -5,13 +5,13 @@ import numpy as np
 from numpy import ndarray
 from scipy.stats import pearsonr
 from tp_quantity.quantity import Qty
-from tp_quantity.uom import SCALAR, MWH, EUR, MT, USD
+from tp_quantity.uom import MWH, EUR, MT, USD
 from tp_random_tests.random_number_generator import RandomNumberGenerator
 from tp_random_tests.random_test_case import RandomisedTest
 
 from tests.brownians.test_brownian_generator import BrownianGeneratorTest
 from tp_maths.random.random_correlation_matrix import RandomCorrelationMatrix
-from tests.statistics_test_case import StatisticsTestCase
+from tp_maths.statistics_test_case import StatisticsTestCase
 from tp_maths.vector_path.vector_path import VectorPath
 
 

@@ -4,7 +4,7 @@ from scipy.stats import pearsonr
 from tp_random_tests.random_number_generator import RandomNumberGenerator
 from tp_random_tests.random_test_case import RandomisedTest
 
-from tests.statistics_test_case import StatisticsTestCase
+from tp_maths.statistics_test_case import StatisticsTestCase
 from tp_maths.brownians.brownian_generator import BrownianGenerator
 from tp_maths.brownians.uniform_generator import SOBOL_UNIFORM_GENERATOR, PseudoUniformGenerator
 
