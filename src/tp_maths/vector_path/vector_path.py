@@ -1,6 +1,10 @@
+from typing import Optional
+
 import numpy as np
 from numpy import ndarray
 from numpy.linalg import svd
+from tp_maths.brownians.brownian_generator import BrownianGenerator
+from tp_maths.brownians.uniform_generator import SOBOL_UNIFORM_GENERATOR
 from tp_quantity.quantity_array import QtyArray
 from tp_quantity.uom import SCALAR
 from tp_utils.type_utils import checked_list_type, checked_type
@@ -29,16 +33,19 @@ class VectorPath:
         return QtyArray(self.path[i_variable, :, i_time], self.uoms[i_variable])
 
     @staticmethod
-    def from_brownians(
+    def brownian_paths(
+            n_variables: int,
             times: ndarray,
-            brownians: ndarray
-    ):
+            n_paths: int,
+            generator: Optional[BrownianGenerator] = None,
+    ) -> 'VectorPath':
+        generator = generator or SOBOL_UNIFORM_GENERATOR
+        brownians = generator.generate(n_variables, n_paths, times)
         return VectorPath(
             [SCALAR for _ in range(brownians.shape[0])],
             times,
             brownians
         )
-
 
     def correlated(self, rho_matrix: ndarray) -> 'VectorPath':
         assert rho_matrix.ndim == 2, "Expected square rho matrix"

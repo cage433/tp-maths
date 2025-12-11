@@ -49,4 +49,4 @@ class StatisticsTestCase(unittest.TestCase):
             n_samples *= 2
         if not has_passed:
             self.fail(
-                f"{msg} failed: Expected {expected:1.3f} (+/- {tol_:1.3f}), last observed after {n_tries} tries was {observed:1.3f}")
+                f"{msg} failed: Expected {expected:1.3f} (+/- {tol_}), last observed after {n_tries} tries was {observed:1.3f}")

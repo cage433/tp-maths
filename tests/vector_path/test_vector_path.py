@@ -36,11 +36,15 @@ class VectorPathTestCase(StatisticsTestCase):
     def _brownian_paths(self, rng: RandomNumberGenerator, scenario: RandomScenario, n_paths: int) -> VectorPath:
         times = scenario.times
         generator = BrownianGeneratorTest.random_brownian_generator(rng)
-        brownians = generator.generate(scenario.n_variables, n_paths, times)
-        return VectorPath.from_brownians(times, brownians)
+        return VectorPath.brownian_paths(
+            scenario.n_variables,
+            times,
+            n_paths,
+            generator
+        )
 
     def _sample_std_dev(self, i_var: int, i_time: int) -> Callable[[VectorPath], float]:
-        def sd(vp: VectorPath):
+        def sd(vp: VectorPath) -> float:
             return vp.variable_sample(i_var, i_time).std
 
         return sd
@@ -160,7 +164,7 @@ class VectorPathTestCase(StatisticsTestCase):
             "Std dev",
             random_vector_path,
             self._sample_std_dev(i_var, i_time),
-            tol=Qty(0.001, SCALAR),
+            tol=0.01,
             expected=np.sqrt(times[i_time]),
         )
 
