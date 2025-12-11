@@ -4,10 +4,10 @@ import numpy as np
 from numpy import ndarray
 from numpy.linalg import svd
 from tp_maths.brownians.brownian_generator import BrownianGenerator
-from tp_maths.brownians.uniform_generator import SOBOL_UNIFORM_GENERATOR
+from tp_maths.brownians.uniform_generator import SOBOL_UNIFORM_GENERATOR, UniformGenerator
 from tp_quantity.quantity_array import QtyArray
 from tp_quantity.uom import SCALAR
-from tp_utils.type_utils import checked_list_type, checked_type
+from tp_utils.type_utils import checked_list_type, checked_type, checked_optional_type
 from tp_quantity.quantity import UOM, Qty
 
 
@@ -37,10 +37,11 @@ class VectorPath:
             n_variables: int,
             times: ndarray,
             n_paths: int,
-            generator: Optional[BrownianGenerator] = None,
+            uniform_generator: Optional[UniformGenerator] = None,
     ) -> 'VectorPath':
-        generator = generator or SOBOL_UNIFORM_GENERATOR
-        brownians = generator.generate(n_variables, n_paths, times)
+        checked_optional_type(uniform_generator, UniformGenerator)
+        brownian_generator = BrownianGenerator(uniform_generator or SOBOL_UNIFORM_GENERATOR)
+        brownians = brownian_generator.generate(n_variables, n_paths, times)
         return VectorPath(
             [SCALAR for _ in range(brownians.shape[0])],
             times,

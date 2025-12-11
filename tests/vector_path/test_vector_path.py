@@ -35,7 +35,7 @@ class VectorPathTestCase(StatisticsTestCase):
 
     def _brownian_paths(self, rng: RandomNumberGenerator, scenario: RandomScenario, n_paths: int) -> VectorPath:
         times = scenario.times
-        generator = BrownianGeneratorTest.random_brownian_generator(rng)
+        generator = rng.maybe(BrownianGeneratorTest.random_uniform_generator(rng))
         return VectorPath.brownian_paths(
             scenario.n_variables,
             times,

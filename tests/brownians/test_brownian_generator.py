@@ -12,11 +12,11 @@ from tp_maths.brownians.uniform_generator import SOBOL_UNIFORM_GENERATOR, Pseudo
 class BrownianGeneratorTest(StatisticsTestCase):
 
     @staticmethod
-    def random_brownian_generator(rng: RandomNumberGenerator) -> BrownianGenerator:
+    def random_uniform_generator(rng: RandomNumberGenerator) -> BrownianGenerator:
         uniform_generator = SOBOL_UNIFORM_GENERATOR
         if rng.is_heads():
             uniform_generator = PseudoUniformGenerator(seed=rng.randint(999999))
-        return BrownianGenerator(uniform_generator)
+        return uniform_generator
 
     @RandomisedTest(number_of_runs=5)
     def test_shape(self, rng):
@@ -25,7 +25,7 @@ class BrownianGeneratorTest(StatisticsTestCase):
         n_times = rng.randint(10, 20)
         times = rng.random_times(n_times)
 
-        generator = self.random_brownian_generator(rng)
+        generator = self.random_uniform_generator(rng)
         brownians = generator.generate(n_variables, n_paths, times)
         self.assertEqual(brownians.shape, (n_variables, n_paths, n_times))
 
@@ -38,7 +38,7 @@ class BrownianGeneratorTest(StatisticsTestCase):
         i_time = rng.randint(n_times)
         i_var, j_var = rng.shuffle(list(range(n_variables)))[:2]
 
-        generator = self.random_brownian_generator(rng)
+        generator = self.random_uniform_generator(rng)
 
         def random_brownians(n_paths: int) -> ndarray:
             return generator.generate(n_variables, n_paths, times)
