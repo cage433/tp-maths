@@ -38,7 +38,8 @@ class SobolGenerator:
             return direction
 
         self.directions = np.zeros((n_variables, self.bits + 1), int)
-        with open(f"resources/new-joe-kuo-6.21201", "r") as f:
+        path = Path(__file__).parent / "resources" / "new-joe-kuo-6.21201"
+        with open(path, "r") as f:
             head = [next(f) for x in range(n_variables)]
             for i, line in enumerate(head[1:]):
                 self.directions[i + 1] = build_direction(line)
