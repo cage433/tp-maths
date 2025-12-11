@@ -8,7 +8,7 @@ from tp_maths.brownians.uniform_generator import SOBOL_UNIFORM_GENERATOR
 from tp_quantity.quantity_array import QtyArray
 from tp_quantity.uom import SCALAR
 from tp_utils.type_utils import checked_list_type, checked_type
-from tp_quantity.quantity import UOM
+from tp_quantity.quantity import UOM, Qty
 
 
 class VectorPath:
@@ -83,8 +83,20 @@ class VectorPath:
         return self.with_drifts(drifts)
 
     def exp(self) -> 'VectorPath':
+        assert all(u == SCALAR for u in self.uoms), f"UOMs must be SCALAR for call to exp()"
         return VectorPath(
             self.uoms,
             self.times,
             np.exp(self.path)
+        )
+
+    def with_prices(self, prices: list[Qty]) -> 'VectorPath':
+        assert len(prices) == self.n_variables, f"Require {self.n_variables} prices, got {prices}"
+        price_values = np.asarray([p.value for p in prices])
+        price_uoms = [p.uom for p in prices]
+        priced_path = np.einsum('f, fpt -> fpt', price_values, self.path)
+        return VectorPath(
+            [u1 * u2 for u1, u2 in zip(self.uoms, price_uoms)],
+            self.times,
+            priced_path
         )

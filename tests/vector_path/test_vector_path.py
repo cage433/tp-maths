@@ -5,7 +5,7 @@ import numpy as np
 from numpy import ndarray
 from scipy.stats import pearsonr
 from tp_quantity.quantity import Qty
-from tp_quantity.uom import SCALAR
+from tp_quantity.uom import SCALAR, MWH, EUR, MT, USD
 from tp_random_tests.random_number_generator import RandomNumberGenerator
 from tp_random_tests.random_test_case import RandomisedTest
 
@@ -185,4 +185,24 @@ class VectorPathTestCase(StatisticsTestCase):
             self._sample_mean(i_var, i_time),
             tol_func=self._sample_mean_tol(i_var, i_time, num_se=1),
             expected=1.0,
+        )
+
+    @RandomisedTest(number_of_runs=10)
+    def test_with_prices(self, rng):
+        scenario = self.RandomScenario(rng)
+        i_time, i_var, j_var, times, n_variables = scenario.i_time, scenario.i_var, scenario.j_var, scenario.times, scenario.n_variables
+        vols: ndarray = np.asarray([rng.uniform() * 0.5 for _ in range(n_variables)])
+        rho_matrix = RandomCorrelationMatrix.truly_random(rng, n_variables)
+        prices = [Qty(rng.uniform(), rng.choice(MWH, EUR / MWH, MT, USD / MT)) for _ in range(n_variables)]
+
+        def random_vector_path(n_paths: int) -> VectorPath:
+            return self._brownian_paths(rng, scenario, n_paths).correlated(rho_matrix).scaled(
+                vols).with_lognormal_adjustments(vols).exp().with_prices(prices)
+
+        self.check_statistic(
+            "Mean",
+            random_vector_path,
+            self._sample_mean(i_var, i_time),
+            tol_func=self._sample_mean_tol(i_var, i_time, num_se=1),
+            expected=prices[i_var],
         )

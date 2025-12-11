@@ -44,9 +44,9 @@ class StatisticsTestCase(unittest.TestCase):
                 has_passed = True
             if i_try >= log_on_try:
                 print(
-                    f"i:{i_try}, N:{n_samples} O:{observed:1.3f}, EXP:{expected:1.3f}, ERR:{error:1.3f}, TOL:{tol:1.3f}")
+                    f"i:{i_try}, N:{n_samples} O:{observed}, EXP:{expected}, ERR:{error}, TOL:{tol}")
             i_try += 1
             n_samples *= 2
         if not has_passed:
             self.fail(
-                f"{msg} failed: Expected {expected:1.3f} (+/- {tol_}), last observed after {n_tries} tries was {observed:1.3f}")
+                f"{msg} failed: Expected {expected} (+/- {tol_}), last observed after {n_tries} tries was {observed}")
