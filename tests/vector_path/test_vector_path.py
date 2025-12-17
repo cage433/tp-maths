@@ -4,15 +4,15 @@ from typing import Optional, Callable
 import numpy as np
 from numpy import ndarray
 from scipy.stats import pearsonr
+from tp_maths.random.random_correlation_matrix import RandomCorrelationMatrix
+from tp_maths.statistics_test_case import StatisticsTestCase
+from tp_maths.vector_path.vector_path import VectorPath
 from tp_quantity.quantity import Qty
 from tp_quantity.uom import MWH, EUR, MT, USD
 from tp_random_tests.random_number_generator import RandomNumberGenerator
 from tp_random_tests.random_test_case import RandomisedTest
 
 from tests.brownians.test_brownian_generator import BrownianGeneratorTest
-from tp_maths.random.random_correlation_matrix import RandomCorrelationMatrix
-from tp_maths.statistics_test_case import StatisticsTestCase
-from tp_maths.vector_path.vector_path import VectorPath
 
 
 class VectorPathTestCase(StatisticsTestCase):
@@ -54,6 +54,16 @@ class VectorPathTestCase(StatisticsTestCase):
             return vp.variable_sample(i_var, i_time).mean
 
         return sm
+
+    def _sample_historic_vol(self, i_var: int) -> Callable[[VectorPath], Qty]:
+        def shv(vp: VectorPath):
+            vols = np.asarray([
+                vp.observed_vol(i_var, i_path)
+                for i_path in range(vp.n_paths)
+            ])
+            return vols.mean()
+
+        return shv
 
     def _sample_mean_tol(self, i_var: int, i_time: int, num_se: float) -> Callable[[VectorPath], Qty]:
         def sm(vp: VectorPath):
@@ -205,4 +215,26 @@ class VectorPathTestCase(StatisticsTestCase):
             self._sample_mean(i_var, i_time),
             tol_func=self._sample_mean_tol(i_var, i_time, num_se=1),
             expected=prices[i_var],
+        )
+
+    @RandomisedTest(number_of_runs=10)
+    def test_historic_vol(self, rng):
+        scenario = self.RandomScenario(rng, n_variables=1, n_times=100)
+        vol = rng.uniform() * 0.5
+        F = Qty(rng.uniform(), USD / MT)
+        vols: ndarray = np.asarray([vol])
+        prices = [F]
+
+        def random_vector_path(n_paths: int) -> VectorPath:
+            brownian_paths = self._brownian_paths(rng, scenario, n_paths)
+            return brownian_paths.scaled(
+                vols).with_lognormal_adjustments(vols).exp().with_prices(prices)
+
+        self.check_statistic(
+            "Historic vol",
+            random_vector_path,
+            self._sample_historic_vol(i_var=0),
+            tol=0.01,
+            expected=vol,
+            init_n_samples=1_000,
         )

@@ -32,6 +32,18 @@ class VectorPath:
     def variable_sample(self, i_variable: int, i_time: int) -> QtyArray:
         return QtyArray(self.path[i_variable, :, i_time], self.uoms[i_variable])
 
+    def variable_path(self, i_variable: int, i_path: int) -> QtyArray:
+        return QtyArray(self.path[i_variable, i_path, :], self.uoms[i_variable])
+
+    def observed_vol(self, i_variable: int, i_path: int) -> float:
+        path = self.variable_path(i_variable, i_path).values
+        shifts = np.log(path[1:] / path[:-1])
+        time_steps = self.times[1:] - self.times[:-1]
+        scaled_shifts = shifts / np.sqrt(time_steps)
+        n = len(shifts)
+        adj = np.sqrt(n / (n - 1.5))
+        return scaled_shifts.std() * adj
+
     @staticmethod
     def brownian_paths(
             n_variables: int,
