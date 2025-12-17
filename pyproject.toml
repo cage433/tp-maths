@@ -10,7 +10,8 @@ dependencies = [
     "numpy (>=2.3.5,<3.0.0)",
     "scipy (>=1.16.3,<2.0.0)",
     "tp-utils @ git+https://github.com/cage433/tp-utils",
-    "tp-quantity @ git+https://github.com/cage433/tp-quantity"
+    "tp-quantity @ git+https://github.com/cage433/tp-quantity",
+    "tp-random-tests @ git+https://github.com/cage433/tp-random-tests",
 ]
 dynamic = ["version"]
 
